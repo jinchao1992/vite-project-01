@@ -1,0 +1,45 @@
+name: Vite CI Demo
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v2
+        with:
+          clean: false
+
+      - name: Install PNPM
+        uses: pnpm/action-setup@v2
+        with:
+            version: 8
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://registry.npmmirror.com/
+          cache: pnpm
+
+      - name: Install Dependencies & Build
+        run: |
+          pnpm install
+          pnpm run build
+
+      - name: Setup OSS Util
+        uses: manyuanrong/setup-ossutil@v2.0
+        with:
+          endpoint: oss-cn-beijing.aliyuncs.com
+          access-key-id: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          access-key-secret: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+
+      - name: Upload Files to OSS
+        run: |
+          ossutil rm oss://jackyjc-vite-01/${GITHUB_REF##*/}/ --include "*" -r -f
+          ossutil cp dist/ oss://jackyjc-vite-01/${GITHUB_REF##*/}/ -r -f
+          ossutil cp 404.html oss://jackyjc-vite-01/ -r -f
