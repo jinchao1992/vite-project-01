@@ -40,6 +40,6 @@ jobs:
 
       - name: Upload Files to OSS
         run: |
-          ossutil rm oss://jackyjc-vite-01/${GITHUB_REF##*/}/ --include "*" -r -f
-          ossutil cp dist/ oss://jackyjc-vite-01/${GITHUB_REF##*/}/ -r -f
+          ossutil rm oss://jackyjc-vite-01/ --include "*" -r -f
+          ossutil cp dist/ oss://jackyjc-vite-01/ -r -f
           ossutil cp 404.html oss://jackyjc-vite-01/ -r -f
